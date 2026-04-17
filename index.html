@@ -4,12 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>待辦事項應用程式</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="app">
     <div class="app-header">
-      <h1>待辦事項</h1>
+      <div class="app-title">
+        <span class="app-icon">✅</span>
+        <h1>待辦事項</h1>
+      </div>
       <button id="theme-toggle" class="theme-toggle" aria-label="切換主題"></button>
     </div>
 
@@ -20,8 +26,27 @@
         placeholder="輸入新的待辦事項..."
         aria-label="新增待辦事項"
       />
-      <button type="submit">新增</button>
+      <button type="submit" aria-label="新增待辦事項">
+        <span class="btn-icon">+</span>
+        <span class="btn-text">新增</span>
+      </button>
     </form>
+
+    <div class="todo-summary" id="todo-summary" hidden>
+      <div class="summary-stats">
+        <span id="todo-count" class="count-badge"></span>
+        <span id="done-count" class="count-badge done"></span>
+      </div>
+      <div class="progress-bar" role="progressbar" aria-label="完成進度">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="filter-bar" id="filter-bar" hidden>
+      <button class="filter-btn active" data-filter="all">全部</button>
+      <button class="filter-btn" data-filter="active">未完成</button>
+      <button class="filter-btn" data-filter="completed">已完成</button>
+    </div>
 
     <ul id="todo-list" class="todo-list"></ul>
   </main>
