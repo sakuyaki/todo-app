@@ -2,6 +2,13 @@ const todoForm = document.getElementById('todo-form');
 const todoInput = document.getElementById('todo-input');
 const todoList = document.getElementById('todo-list');
 const themeToggle = document.getElementById('theme-toggle');
+const todoSummary = document.getElementById('todo-summary');
+const filterBar = document.getElementById('filter-bar');
+const progressFill = document.getElementById('progress-fill');
+const todoCountEl = document.getElementById('todo-count');
+const doneCountEl = document.getElementById('done-count');
+
+let currentFilter = 'all';
 
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -17,14 +24,63 @@ themeToggle.addEventListener('click', () => {
   localStorage.setItem('theme', next);
 });
 
+function getRealItems() {
+  return Array.from(todoList.querySelectorAll('.todo-item'));
+}
+
+function updateSummary() {
+  const items = getRealItems();
+  const total = items.length;
+  const done = items.filter(li => li.classList.contains('completed')).length;
+
+  if (total === 0) {
+    todoSummary.hidden = true;
+    filterBar.hidden = true;
+    return;
+  }
+
+  todoSummary.hidden = false;
+  filterBar.hidden = false;
+
+  todoCountEl.textContent = `共 ${total} 項`;
+  doneCountEl.textContent = `已完成 ${done} 項`;
+  progressFill.style.width = `${Math.round((done / total) * 100)}%`;
+}
+
+function applyFilter() {
+  const items = getRealItems();
+  items.forEach(li => {
+    const isCompleted = li.classList.contains('completed');
+    if (
+      currentFilter === 'all' ||
+      (currentFilter === 'active' && !isCompleted) ||
+      (currentFilter === 'completed' && isCompleted)
+    ) {
+      li.style.display = '';
+    } else {
+      li.style.display = 'none';
+    }
+  });
+}
+
+filterBar.addEventListener('click', (event) => {
+  const btn = event.target.closest('.filter-btn');
+  if (!btn) return;
+  filterBar.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.filter;
+  applyFilter();
+});
+
 function renderEmptyState() {
-  if (todoList.children.length === 0) {
-    todoList.innerHTML = '<li class="empty">目前沒有待辦事項</li>';
+  if (getRealItems().length === 0) {
+    todoList.innerHTML = '<li class="empty"><span class="empty-icon">📋</span>目前沒有待辦事項</li>';
   }
 }
 
 function addTodoItem(text) {
-  if (todoList.querySelector('.empty')) {
+  const empty = todoList.querySelector('.empty');
+  if (empty) {
     todoList.innerHTML = '';
   }
 
@@ -38,6 +94,8 @@ function addTodoItem(text) {
   checkbox.type = 'checkbox';
   checkbox.addEventListener('change', () => {
     li.classList.toggle('completed', checkbox.checked);
+    updateSummary();
+    applyFilter();
   });
 
   const span = document.createElement('span');
@@ -48,15 +106,24 @@ function addTodoItem(text) {
 
   const deleteButton = document.createElement('button');
   deleteButton.className = 'delete-btn';
-  deleteButton.textContent = '刪除';
+  deleteButton.setAttribute('aria-label', '刪除');
+  deleteButton.textContent = '🗑';
   deleteButton.addEventListener('click', () => {
-    li.remove();
-    renderEmptyState();
+    li.classList.add('removing');
+    li.addEventListener('animationend', () => {
+      li.remove();
+      renderEmptyState();
+      updateSummary();
+      applyFilter();
+    }, { once: true });
   });
 
   li.appendChild(label);
   li.appendChild(deleteButton);
   todoList.appendChild(li);
+
+  updateSummary();
+  applyFilter();
 }
 
 todoForm.addEventListener('submit', (event) => {
@@ -74,3 +141,4 @@ todoForm.addEventListener('submit', (event) => {
 });
 
 renderEmptyState();
+
