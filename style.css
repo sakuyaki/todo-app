@@ -5,6 +5,19 @@
   --primary: #2563eb;
   --danger: #dc2626;
   --border: #d1d5db;
+  --item-bg: #fafafa;
+  --muted: #6b7280;
+}
+
+[data-theme="dark"] {
+  --bg: #111827;
+  --card: #1f2937;
+  --text: #f9fafb;
+  --primary: #3b82f6;
+  --danger: #ef4444;
+  --border: #374151;
+  --item-bg: #273244;
+  --muted: #9ca3af;
 }
 
 * {
@@ -27,9 +40,30 @@ body {
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
 
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
 h1 {
-  text-align: center;
-  margin-top: 0;
+  margin: 0;
+}
+
+.theme-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text);
+  line-height: 1;
+}
+
+.theme-toggle:hover {
+  opacity: 0.8;
 }
 
 .todo-form {
@@ -72,7 +106,7 @@ h1 {
   margin-bottom: 10px;
   border: 1px solid var(--border);
   border-radius: 10px;
-  background: #fafafa;
+  background: var(--item-bg);
 }
 
 .todo-content {
@@ -90,7 +124,7 @@ h1 {
 
 .todo-item.completed span {
   text-decoration: line-through;
-  color: #6b7280;
+  color: var(--muted);
 }
 
 .delete-btn {
@@ -104,6 +138,6 @@ h1 {
 
 .empty {
   text-align: center;
-  color: #6b7280;
+  color: var(--muted);
   padding: 16px 0;
 }
